@@ -1,3 +1,4 @@
 sshkeys
 ./venv/
 .idea/
+.DS_Store
