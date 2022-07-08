@@ -5,7 +5,7 @@ import os, time, paramiko, datetime
 
 # check serial no length
 def validate_serial_no(num):
-    if len(num) == 10:
+    if len(num) == 15:
         return True
     else:
         return False
@@ -73,7 +73,7 @@ def check_cpu_temp(url, port, uname, passwd):
 def check_bluetooth(url, port, uname, passwd):
     print("Checking Bluetooth....")
     ssh.connect(url, port, uname, passwd)
-    ssh.exec_command("bluetoothctl power on && bluetoothctl scan on")
+    ssh.exec_command("bluetoothctl power on && timeout 15s bluetoothctl scan on")
     stdin4, stdout4, stderr4 = ssh.exec_command('dmesg | grep "Blue"')
     cmd_output = stdout4.readlines()
     if "Bluetooth" in cmd_output[0].strip():
