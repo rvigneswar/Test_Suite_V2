@@ -250,7 +250,7 @@ def check_board_temp():
 
 
 # Writing to file
-def write_to_file(serial_no, url, disk, ram, data, rc_data, ntp_data, board_temp):
+def write_to_file(serial_no, url, disk, ram, data, rc_data, ntp_data, board_temp,,bluetooth, sd_card):
     file = open(f"Report_{serial_no}.txt", "a")
     now = datetime.datetime.now()
     file.write(str(now.strftime("%Y-%m-%d %H:%M:%S")))
@@ -265,6 +265,16 @@ def write_to_file(serial_no, url, disk, ram, data, rc_data, ntp_data, board_temp
     file.write(f"RAM Usage: {ram}.")
     file.write("\n")
     file.write(f"Board Temperature: {board_temp} deg.")
+    file.write("\n")
+    if bluetooth:
+        file.write("Bluetooth is available.")
+    else:
+        file.write("Bluetooth is not available.")
+    file.write("\n")
+    if sd_card:
+        file.write("SD_Card is available.")
+    else:
+        file.write("SD Card is not available.")
     file.write("\n")
     file.write("\n")
     file.write(f"Test for NTP Sync.")
@@ -335,12 +345,14 @@ while True:
         url = get_dynamic_ip()
         disk, ram = check_disk_ram_usage(url, port, uname, passwd)
         cpu_temp = check_cpu_temp(url, port, uname, passwd)
+        bluetooth = check_bluetooth(url, port, uname, passwd)
+        sd_card = check_sd_card(url, port, uname, passwd)
         login_dyn_ip(url)
         data = check_ui_navigation()
         rc_data = add_tracker()
         ntp_data = check_ntp_sync()
         board_temp = check_board_temp()
-        write_to_file(serial_no, url, disk, ram, data, rc_data, ntp_data, board_temp)
+        write_to_file(serial_no, url, disk, ram, data, rc_data, ntp_data, board_temp, bluetooth, sd_card)
         driver.quit()
         break
     else:
