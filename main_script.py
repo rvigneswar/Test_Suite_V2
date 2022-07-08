@@ -143,12 +143,16 @@ def check_ui_navigation():
             print(f"The software version is {software_version}")
     driver.find_element(By.XPATH,
                         '//*[@id="root"]/div/div/div[1]/nav/div[2]/div/div/div/div/div[2]/div/a[1]/button').click()
+    time.sleep(wait_time)
     wind_sensor = driver.find_element(By.XPATH,
                                       '//*[@id="root"]/div/div/div[1]/main/div[2]/div/div[2]/div[2]/div/div/div[2]/div[2]/h6').text
+    time.sleep(wait_time)
     wind_direction = driver.find_element(By.XPATH,
                                          '//*[@id="root"]/div/div/div[1]/main/div[2]/div/div[2]/div[2]/div/div/div[2]/div[2]/h6').text
+    time.sleep(wait_time)
     snow_sensor = driver.find_element(By.XPATH,
                                       '//*[@id="root"]/div/div/div[1]/main/div[2]/div/div[2]/div[3]/div/div/div[2]/div[2]/h6').text
+    time.sleep(wait_time)
     flood_sensor = driver.find_element(By.XPATH,
                                        '//*[@id="root"]/div/div/div[1]/main/div[2]/div/div[2]/div[4]/div/div/div[2]/div[2]/h6').text
     time.sleep(2)
