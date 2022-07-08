@@ -250,7 +250,7 @@ def check_board_temp():
 
 
 # Writing to file
-def write_to_file(serial_no, url, disk, ram, data, rc_data, ntp_data, board_temp,,bluetooth, sd_card):
+def write_to_file(serial_no, url, disk, ram, data, rc_data, ntp_data, board_temp, bluetooth, sd_card):
     file = open(f"Report_{serial_no}.txt", "a")
     now = datetime.datetime.now()
     file.write(str(now.strftime("%Y-%m-%d %H:%M:%S")))
