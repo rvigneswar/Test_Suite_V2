@@ -184,6 +184,17 @@ def add_tracker():
             driver.find_element(By.XPATH,
                                 '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[2]/div/div/div[2]/button[1]').click()
             time.sleep(wait_time)
+    driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[1]/div[1]/div/div/div/button[1]').click()
+    time.sleep(wait_time)
+    rc_did_no = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[2]/div/div/table/tbody/tr/td[3]').text
+    rc_ver = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[2]/div/div/table/tbody/tr/td[4]').text
+    rc_status = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[2]/div/div/table/tbody/tr/td[5]').text
+    rc_mode = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[2]/div/div/table/tbody/tr/td[8]').text
+    rc_batt_volt = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[2]/div/div/table/tbody/tr/td[11]/p/div/span[1]').text
+    rc_batt_cur = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[2]/div/div/table/tbody/tr/td[12]/div/span[1]').text
+    rc_pv_volt = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[2]/div/div/table/tbody/tr/td[9]/p/div/span[1]').text
+    rc_pv_cur = driver.find_element(By.XPATH, '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[2]/div/div/table/tbody/tr/td[10]/p/div/span[1]').text
+    return rc_did_no, rc_ver, rc_status, rc_mode, rc_batt_volt, rc_batt_cur, rc_pv_volt, rc_pv_cur
 
 
 # NTP Sync
@@ -217,6 +228,8 @@ def check_ntp_sync():
     time.sleep(5)
     time_zone_2 = driver.find_element(By.XPATH,
                                       '//*[@id="root"]/div/div[1]/div[1]/header/div/div[3]').get_attribute("title")
+    print(f"Test 1:\t\tTime Zone selected is {time_zone_id_1} and time synced is {time_zone_1}.")
+    print(f"Test 2:\t\tTime Zone selected is {time_zone_id_2} and time synced is {time_zone_2}.")
     return time_zone_id_1, time_zone_1, time_zone_id_2, time_zone_2
 
 
@@ -232,39 +245,71 @@ def check_board_temp():
     driver.implicitly_wait(wait_time * 3000)
     board_temp = driver.find_element(By.XPATH,
                                      '//*[@id="root"]/div/div/div[1]/main/div[1]/div/div[2]/div/div[2]/div[3]/div/div[2]/h2').text
+    print(f"Board Temperature is {board_temp} deg.")
     return board_temp
 
 
 # Writing to file
-def write_to_file(serial_no, url, disk, ram, data):
-    file = open(f"output {serial_no}.txt", "a")
+def write_to_file(serial_no, url, disk, ram, data, rc_data, ntp_data, board_temp):
+    file = open(f"Report_{serial_no}.txt", "a")
     now = datetime.datetime.now()
     file.write(str(now.strftime("%Y-%m-%d %H:%M:%S")))
+    file.write("\t")
+    file.write(f"Serial No: {serial_no}.")
     file.write("\n")
     file.write("\n")
-    file.write(f"Serial No: {serial_no}")
+    file.write(f"Dynamic IP: {url}.")
+    file.write("\n")
+    file.write(f"Disk Usage: {disk}.")
+    file.write("\n")
+    file.write(f"RAM Usage: {ram}.")
+    file.write("\n")
+    file.write(f"Board Temperature: {board_temp} deg.")
     file.write("\n")
     file.write("\n")
-    file.write(f"Dynamic IP: {url}")
+    file.write(f"Test for NTP Sync.")
     file.write("\n")
-    file.write(f"Disk Usage: {disk},")
+    file.write("Test 1:\t\t")
+    file.write(f"Time Zone selected is {ntp_data[0]} and time is {ntp_data[1]}.")
     file.write("\n")
-    file.write(f"RAM Usage: {ram}")
+    file.write("Test 2:\t\t")
+    file.write(f"Time Zone selected is {ntp_data[2]} and time is {ntp_data[3]}.")
     file.write("\n")
-    file.write(f"Wind Speed: {data[0]} m/s")
     file.write("\n")
-    file.write(f"Wind Direction: {data[1]} deg")
+    file.write(f"Tracker Data.")
     file.write("\n")
-    file.write(f"Snow Level: {data[2]} mm")
+    file.write(f"RC DID NO: {rc_data[0]}.")
     file.write("\n")
-    file.write(f"Flood Level: {data[3]} mm")
+    file.write(f"RC Version: {rc_data[1]}.")
     file.write("\n")
-    file.write(f"Hardware Version: {data[4]}")
+    file.write(f"RC Status: {rc_data[2]}.")
     file.write("\n")
-    file.write(f"Software Version: {data[5]}")
+    file.write(f"RC Mode: {rc_data[3]}.")
+    file.write("\n")
+    file.write(f"RC Battery Voltage: {rc_data[4]} volts.")
+    file.write("\n")
+    file.write(f"RC Battery Current: {rc_data[5]} amps.")
+    file.write("\n")
+    file.write(f"RC PV Voltage: {rc_data[6]} volts.")
+    file.write("\n")
+    file.write(f"RC PV Current: {rc_data[7]} amps.")
+    file.write("\n")
+    file.write("\n")
+    file.write(f"Sensor data")
+    file.write(f"Wind Speed: {data[0]} m/s.")
+    file.write("\n")
+    file.write(f"Wind Direction: {data[1]} deg.")
+    file.write("\n")
+    file.write(f"Snow Level: {data[2]} mm.")
+    file.write("\n")
+    file.write(f"Flood Level: {data[3]} mm.")
+    file.write("\n")
+    file.write(f"Hardware Version: {data[4]}.")
+    file.write("\n")
+    file.write(f"Software Version: {data[5]}.")
 
 
-serial_no = input("Enter the Serial Number: ")
+
 username = '//*[@id="menu-username"]/div[3]/ul/li[1]'
 password = 'Admin'
 uname = "torizon"
@@ -279,15 +324,24 @@ if os_type == "nt":
 elif os_type == "posix":
     driver_path = str(os.getcwd()) + "/driver/chromedriver"
 
-if validate_serial_no(serial_no):
-    driver = webdriver.Chrome(executable_path=driver_path)
-    driver.maximize_window()
-    main_addr = "172.16.0.3"
-    disk, ram = check_disk_ram_usage(main_addr, port, uname, passwd)
-    cpu_temp = check_cpu_temp(main_addr, port, uname, passwd)
-    login_dyn_ip(main_addr)
-    data = check_ui_navigation()
-    driver.quit()
-    write_to_file(serial_no, main_addr, disk, ram, data)
-else:
-    print("Please the valid serial number....")
+# inp = input("Press 'Enter' to continue(Press 'q' to exit)")
+while True:
+    serial_no = input("Enter the Serial Number: ")
+    if validate_serial_no(serial_no):
+        driver = webdriver.Chrome(executable_path=driver_path)
+        driver.maximize_window()
+        # main_addr = "172.16.0.3"
+        login_to_ui()
+        url = get_dynamic_ip()
+        disk, ram = check_disk_ram_usage(url, port, uname, passwd)
+        cpu_temp = check_cpu_temp(url, port, uname, passwd)
+        login_dyn_ip(url)
+        data = check_ui_navigation()
+        rc_data = add_tracker()
+        ntp_data = check_ntp_sync()
+        board_temp = check_board_temp()
+        write_to_file(serial_no, url, disk, ram, data, rc_data, ntp_data, board_temp)
+        driver.quit()
+        break
+    else:
+        print("Please enter a valid serial number....")
